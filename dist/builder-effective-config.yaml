@@ -1,0 +1,20 @@
+directories:
+  output: dist
+  buildResources: img
+appId: com.ZERO.killconsole
+productName: ZERO Kill Console
+files:
+  - filter:
+      - main.js
+      - index.html
+      - renderer.js
+      - img/**/*
+      - logParser.js
+      - eventHandlers.js
+      - keyword.js
+      - preload.js
+      - modal.js
+win:
+  target: portable
+  icon: img/icon.ico
+electronVersion: 29.4.6

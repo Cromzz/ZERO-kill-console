@@ -1,0 +1,61 @@
+{
+  "name": "cz-kill-console",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./main.js",
+  "exports": {
+    ".": "./main.js",
+    "./preload": "./preload.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "author": "Cromz",
+  "build": {
+    "appId": "com.ZERO.killconsole",
+    "productName": "ZERO Kill Console",
+    "files": [
+      "main.js",
+      "index.html",
+      "renderer.js",
+      "img/**/*",
+      "logParser.js",
+      "eventHandlers.js",
+      "keyword.js",
+      "preload.js",
+      "modal.js",
+      "autoUpdater.js"
+    ],
+    "directories": {
+      "buildResources": "img"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "img/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "repository": {
+    "url": "https://github.com/Cromzz/ZERO-kill-console"
+  },
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  },
+  "dependencies": {
+    "electron-store": "^10.1.0",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^26.0.12",
+    "electron-updater": "^6.6.2"
+  }
+}
