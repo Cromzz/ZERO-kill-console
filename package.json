@@ -26,7 +26,7 @@
       "logParser.js",
       "eventHandlers.js",
       "keyword.js",
-      "preload.js",
+      "preload.mjs",
       "modal.js",
       "autoUpdater.js"
     ],

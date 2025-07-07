@@ -12,9 +12,13 @@ files:
       - logParser.js
       - eventHandlers.js
       - keyword.js
-      - preload.js
+      - preload.mjs
       - modal.js
+      - autoUpdater.js
 win:
-  target: portable
+  target: nsis
   icon: img/icon.ico
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
 electronVersion: 29.4.6
