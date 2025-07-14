@@ -1,21 +1,23 @@
-import { autoUpdater, AppUpdater } from 'electron-updater';
-import { packageJson } from './package.json';
-import { app } from 'electron';
+import { createRequire } from 'node:module';
+import packageJson from './package.json' assert { type: 'json' };
 
-autoUpdater.autoDownload = true;    
-autoUpdater.autoInstallOnAppQuit = true;
-autoUpdater.autoUpdate = true;
+const require = createRequire(import.meta.url);
+const { autoUpdater } = require('electron-updater');
 
-app.whenReady().then(() => {
-    autoUpdater.checkForUpdates();
-});
+
 
 autoUpdater.on('update-available', () => {
-    console.log('Update available', packageJson.version);
+  console.log('Update available', packageJson.version);
 });
+
 autoUpdater.on('update-not-available', () => {
-    console.log('We are up to date!', packageJson.version);
+  console.log('Up to date!', packageJson.version);
 });
+
 autoUpdater.on('update-downloaded', () => {
-    console.log('Update downloaded');
+  console.log('Update downloaded');
 });
+
+autoUpdater.version = packageJson.version;
+
+export { autoUpdater }; // ✅ This matches your import

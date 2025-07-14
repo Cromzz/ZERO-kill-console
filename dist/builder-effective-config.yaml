@@ -21,4 +21,9 @@ win:
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
+publish:
+  repo: ZERO-kill-console
+  owner: Cromzz
+  provider: github
+  releaseType: release
 electronVersion: 29.4.6

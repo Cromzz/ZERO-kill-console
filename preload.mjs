@@ -27,12 +27,15 @@ const api = {
   onFileStatusUpdate: (callback) => ipcRenderer.on('file-status-update', (_, status) => callback(status)),
   
   // Utility
-  getAppVersion: () => ipcRenderer.invoke('get-app-version')
+  getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+  
+  // Update handling
+  onUpdateAvailable: (callback) => ipcRenderer.on('update-available', () => callback()),
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+  installUpdate: () => ipcRenderer.invoke('install-update'),
+  onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', () => callback()),
 };
 
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld('electronAPI', api);
-
-// Log that preload script has loaded
-console.log('Preload script loaded');

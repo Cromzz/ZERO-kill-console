@@ -3,8 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <title>CZ Kill Console</title>
+  <script>
+    // tailwind.config.js
+    module.exports = {
+      theme: {
+        extend: {
+          keyframes: {
+            'spin-bounce': {
+              '0%': { transform: 'rotate(0deg) scale(1)' },
+              '25%': { transform: 'rotate(90deg) scale(1.1)' },
+              '50%': { transform: 'rotate(180deg) scale(0.95)' },
+              '75%': { transform: 'rotate(270deg) scale(1.05)' },
+              '100%': { transform: 'rotate(360deg) scale(1)' },
+            },
+          },
+          animation: {
+            'spin-bounce': 'spin-bounce 0.6s linear infinite',
+          },
+        },
+      },
+      plugins: [],
+    }
+  </script>
+  <title>ZERO Kill Console</title>
   <style>
     body { font-family: sans-serif;}
     .weapon { color: #e42121; }
@@ -15,8 +36,8 @@
 <body class="h-screen bg-gradient-to-b from-stone-800 to-stone-900/40 bg-black text-white">
     <div class="absolute sticky top-0 left-0 right-0 drag-bar flex justify-between items-center bg-stone-900 p-2 z-50">
         <div class="flex justify-start items-center space-x-2">
-            <span class="text-white font-semibold">Kill Console</span>
-            <span class="text-white text-xs bg-emerald-600 rounded px-2 p-1">v0.0.1</span>
+            <span class="text-white font-semibold">[ZERO] Kill Console BETA</span>
+            <span id="version" class="text-white text-xs bg-red-700 rounded px-2 p-1"></span>
         </div>
         <div class="flex space-x-2 no-drag">
           <button onclick="window.electronAPI.windowControl('minimize')" class="w-6 h-6 bg-stone-700 hover:bg-red-600 rounded duration-300 transition-colors relative">
@@ -28,8 +49,31 @@
         </div>
     </div>
 
+    <div id="updateModal" class="hidden fixed inset-0 z-40 bg-black/90 flex justify-center items-center transition-opacity duration-300 p-4">
+      <div class="bg-stone-900 p-6 rounded-lg w-full">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-xl font-bold text-white">New BETA Version Available.</h1>
+        </div>
+        <p class="text-sm text-gray-300">A new version of the kill console is available. Please enjoy this image of Chris Roberts while we update your experience.</p>
+        <div class="flex justify-center items-center mt-2 transition-all duration-1000">
+          <img id="updateModalImage" src="./img/cr_banner.png" class="filter grayscale rounded-lg transition-all duration-1000" alt="">
+          <p>Once the update has finished downloading the below button will become active.</p>
+          <div role="status">
+            <svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-red-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+            </svg>
+          </div>
+        </div>
+        <button id="updateModalButton" disabled onclick="window.electronAPI.installUpdate()" class="mt-4 bg-green-600 disabled:bg-stone-800 disabled:text-stone-500 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors w-full transition-all duration-1000">Update</button>
+
+        </div>  
+
+    </div>
+
     <!-- Modal -->
-    <div id="modal" class="hidden fixed inset-0 z-50 bg-black/90 flex justify-center items-center transition-opacity duration-300 p-4">
+    <div id="modal" class="hidden fixed inset-0 z-40 bg-black/90 flex justify-center items-center transition-opacity duration-300 p-4">
       <div class="bg-stone-900 p-6 rounded-lg w-full">
         
         <!-- Header -->
@@ -55,24 +99,26 @@
         <div class="mb-6">
           <label for="game-path" class="block text-sm font-medium text-gray-300 mb-2">Star Citizen Game Directory</label>
           <div class="flex space-x-2">
-            <input 
-              type="text" 
-              id="game-path" 
-              placeholder="C:\\Program Files\\Roberts Space Industries\\StarCitizen"
+            <input type="text" id="game-path" placeholder=""
               class="flex-1 bg-stone-800 border border-stone-700 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
             >
-            <button onclick="saveGameDirectory()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors">
-              Save
-            </button>
+            <button onclick="saveGameDirectory()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors">Save</button>
           </div>
           <p id="game-path-info" class="mt-2 text-xs text-gray-400">Path to your Star Citizen installation directory</p>
         </div>
 
+        <div class="mb-6">
+          <p id="update-info" class="mt-2 text-xs text-gray-400">consider donating to support development.</p>
+          <a href="https://buymeacoffee.com/cromz" target="_blank" class="text-blue-500 hover:text-blue-600">🍵 Buy me a coffee.</a>
+        </div>
       </div>
     </div>
 
-    <div class="absolute sticky top-0 flex justify-left items-center">
+    <div class="absolute sticky top-0 flex justify-left items-center relative">
         <img class="w-full" src="img/1.png" alt="Zero logo">
+        <div class="mt-2 text-[6px] text-gray-400 p-2 absolute left-0 bottom-0">
+          <span id="file-read-info"></span>
+        </div>
     </div>
     <div class="absolute sticky top-0 flex justify-between items-center p-4">
     <h1 class="text-2xl font-bold">Activity</h1>
@@ -82,22 +128,21 @@
         </button>
       </div>
     </div>
-    
     <div id="events" class="absolute sticky top-0 p-2 space-y-1">
 
     </div>
-      <div class="mt-2 text-xs text-gray-400 p-2 absolute left-0 bottom-0">
-        <span id="file-read-info"></span>
-      </div>
-    </div>
     
   <!-- Load modal functionality first -->
+  <script src="modal.js" type="module"></script>
   <script type="module">
-    import { openModal, closeModal } from './modal.js';
+    import { openModal, closeModal, openUpdateModal } from './modal.js';
+    import pkg from './package.json' assert { type: 'json' };
     
+    document.getElementById('version').textContent = `v${pkg.version}`;
     // Make modal functions globally available
     window.openModal = openModal;
     window.closeModal = closeModal;
+    window.openUpdateModal = openUpdateModal;
     
     // Import renderer after setting up globals
     import './renderer.js';

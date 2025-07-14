@@ -1,6 +1,6 @@
 {
   "name": "cz-kill-console",
-  "version": "1.0.0",
+  "version": "0.0.13",
   "type": "module",
   "main": "./main.js",
   "exports": {
@@ -12,7 +12,8 @@
   },
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "publish": "electron-builder --publish always"
   },
   "author": "Cromz",
   "build": {
@@ -40,22 +41,31 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
+    },
+    "publish": {
+      "repo": "ZERO-kill-console",
+      "owner": "Cromzz",
+      "provider": "github",
+      "releaseType": "release"
     }
   },
-  "repository": {
-    "url": "https://github.com/Cromzz/ZERO-kill-console"
+  "electronBuilder": {
+    "win": {
+      "console": true
+    }
   },
-  "publish": {
+  "dev-app-update": {
     "provider": "github",
     "releaseType": "release"
   },
   "dependencies": {
+    "electron-log": "^5.4.1",
     "electron-store": "^10.1.0",
+    "electron-updater": "^6.6.2",
     "ws": "^8.13.0"
   },
   "devDependencies": {
     "electron": "^29.0.0",
-    "electron-builder": "^26.0.12",
-    "electron-updater": "^6.6.2"
+    "electron-builder": "^26.0.12"
   }
 }

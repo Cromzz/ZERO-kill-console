@@ -25,6 +25,17 @@ export function closeModal() {
     }
 }
 
+export function openUpdateModal() {
+    console.log('openModal called');
+    const modal = document.getElementById('updateModal');
+
+    modal.style.pointerEvents = 'auto';
+
+    void modal.offsetWidth;
+    modal.classList.remove('hidden');
+}
+
 // Make functions available globally
 window.openModal = openModal;
 window.closeModal = closeModal;
+window.openUpdateModal = openUpdateModal;

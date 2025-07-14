@@ -10,7 +10,7 @@ electronAPI.onFileStatusUpdate?.(({ status, isError }) => {
   if (fileReadInfo) {
     fileReadInfo.textContent = status;
     fileReadInfo.className = 'text-xs p-1 rounded';
-    fileReadInfo.classList.add(isError ? 'bg-red-800' : 'bg-green-800', 'text-white');
+    fileReadInfo.classList.add(isError ? 'bg-black/30' : 'bg-black/30', 'text-white');
   }
 });
 
@@ -73,6 +73,7 @@ window.saveGameDirectory = saveGameDirectory;
 window.saveAllSettings = saveAllSettings;
 window.openModal = openModal;
 window.closeModal = closeModal;
+window.openUpdateModal = openUpdateModal;
 
 // Event listeners
 window.electronAPI.onKillEvent((data) => {
@@ -102,5 +103,22 @@ window.electronAPI.onIncapEvent((data) => {
 });
 
 
-//<Spawn Flow> CSCPlayerPUSpawningComponent::UnregisterFromExternalSystems
-//<2025-07-06T14:30:45.884Z> [Notice] <Spawn Flow> CSCPlayerPUSpawningComponent::UnregisterFromExternalSystems: Player 'Der_Hetzer' [202035189859] lost reservation for spawnpoint bed_hospital_2_a-005 [4755889827285] at location 3515131989 [Team_ActorFeatures][Gamerules]
+
+// Handle update available event
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.electronAPI?.onUpdateAvailable) {
+    window.electronAPI.onUpdateAvailable(() => {
+      openUpdateModal();
+    });
+  }
+  if (window.electronAPI?.onUpdateDownloaded)
+    {
+      window.electronAPI.onUpdateDownloaded(() => {
+        const updateModalImage = document.getElementById('updateModalImage');
+        const updateModalButton = document.getElementById('updateModalButton');
+        updateModalButton.disabled = false;
+        updateModalImage.classList.remove('grayscale');
+      });
+    }
+});
+

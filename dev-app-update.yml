@@ -1,0 +1,11 @@
+version: 0.0.6
+files:
+  - url: ZERO-Kill-Console-Setup-0.0.6.exe
+    sha512: BWoahrkU0N4V1sFFBvd6gACb7sLtcysQHaHCerdvVuqpJN5Wy+IZNyKiHKyhmqA5xjEsF4f6zH5c2/W5EbwjOg==
+    size: 77978989
+path: ZERO-Kill-Console-Setup-0.0.6.exe
+sha512: BWoahrkU0N4V1sFFBvd6gACb7sLtcysQHaHCerdvVuqpJN5Wy+IZNyKiHKyhmqA5xjEsF4f6zH5c2/W5EbwjOg==
+releaseDate: '2025-07-09T18:22:12.249Z'
+owner: Cromzz
+repo: ZERO-kill-console
+provider: github

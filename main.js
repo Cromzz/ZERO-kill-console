@@ -4,11 +4,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Store from 'electron-store';
 import { splitEntriesByTimestamp, parseKillEntry, parseIncapEntry } from './logParser.js';
+import { autoUpdater } from './autoUpdater.js';
+import log from 'electron-log';
 
 // Get the current directory name in ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 
 // Ensure proper error handling for ESM
@@ -63,7 +64,7 @@ function sendStatusUpdate(status, isError = false) {
 }
 
 function readNewLogData() {
-  sendStatusUpdate('Reading log file... ' + LOG_FILE_PATH);
+  sendStatusUpdate('Reading... ' + LOG_FILE_PATH);
   
   fs.stat(LOG_FILE_PATH, (err, stats ) => {
     if (err) {
@@ -136,24 +137,55 @@ function readNewLogData() {
   });
 }
 
-app.whenReady().then(() => {
-  const POLL_INTERVAL_MS = 5000; // 0.5 second
 
+
+app.whenReady().then(() => {
+   
   createWindow();
+
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.forceDevUpdateConfig = true;
+
+  //check for updates
+  log.info('Checking for update...')
+  let updateAvailable = false
+  autoUpdater.checkForUpdates();
+
+  //handle update events
+  autoUpdater.on('update-available', () => {
+    updateAvailable = true;
+    log.info('Update available found, aborting log reading...');
+    mainWindow?.webContents.send('update-available');
+    
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    log.info('Update downloaded');
+    mainWindow?.webContents.send('update-downloaded');
+  });
   
-  // Start a loop to poll the file
-  setInterval(() => {
-    readNewLogData();
-  }, POLL_INTERVAL_MS);
+  if(!updateAvailable){
+    // Start a loop to poll the file
+    const POLL_INTERVAL_MS = 1000; // 1 second 
+    log.info('No update found, starting log reading, rate: ' + POLL_INTERVAL_MS + 'ms');
+    setInterval(() => {
+      readNewLogData();
+    }, POLL_INTERVAL_MS);
+  }
 
 });
 
+ipcMain.handle('install-update', async () => {
+  log.info('update button clicked, quiting and installing...');
+  autoUpdater.quitAndInstall(true, true);
+  
+  return true;
+});
 
 ipcMain.on('simulate-kill', (event, entryType) => {
     const logLine = TEST_ENTRIES[entryType] || TEST_ENTRIES.basic;
     fs.appendFile(LOG_FILE_PATH, logLine, (err) => {
-      if (err) console.error('Failed to write test log:', err);
-      else console.log('Test kill written to log.');
     });
 });
 
